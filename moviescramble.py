@@ -9,7 +9,7 @@ chunksize=2.0
 infn=['../videos/moana_saves_turtle.mp4']
 outfn='../videos/moana_saves_turtle_scrambled_%fs.mp4'%chunksize
 
-# # Example with just two videos intermixed
+# # Example with two videos intermixed
 # infn=['../videos/bathsong.mp4','../videos/mountains.mp4']
 # outfn='../videos/mixed_scrambled_%fs.mp4'%chunksize
 
