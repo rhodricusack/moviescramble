@@ -3,7 +3,7 @@ import math
 import random
 import numpy as np
 
-# Scrambled video(s) in time - chop into chunks and rearrange
+# Scramble video(s) in time - chop into chunks and rearrange
 # Rhodri Cusack Trinity College Dublin 2020-10-14, cusackrh@tcd.ie
 
 chunksize=2.0
