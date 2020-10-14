@@ -2,9 +2,7 @@
 Rhodri Cusack, Trinity College Dublin, 2020-10-14, cusackrh@tcd.ie
 
 ## Purpose 
-Scrambles movies in time, by cutting into chunks and rearranging.
-Chunks are 2.0 s by default
-It will scramble more than movie, intermixing the chunks, if you give it a list in inpth
+Scrambles movies in time, by cutting into chunks and rearranging. Chunks are 2.0 s by default. It will scramble more than movie, intermixing the chunks, if you give it a list of filenames in inpth
 
 ## Installation
 To set up conda environment use
