@@ -46,22 +46,21 @@ for file in infn:
         
     multi_dur+=dur
 
-singlevideo=allvideos
+# Combined details
 dur=multi_dur
-nframes=singlevideo.shape[0]
+nframes=allvideos.shape[0]
 
 # Shuffled order
 nchunks=math.ceil(dur/chunksize)
 rorder=np.random.permutation(nchunks)
-inputdict={'-r':fps, '-width':metadata['video']['@width'], '-height':metadata['video']['@height'] }
-outputdict={}#{'-r': fps, '-vcodec': 'libx264', '-pix_fmt': 'h264'}
-writer=skvideo.io.FFmpegWriter(outfn) #, inputdict=inputdict, outputdict=outputdict)
 
+# Ready to write
+writer=skvideo.io.FFmpegWriter(outfn) 
 
 # Shuffle and output
 for chunktime in rorder:
     lowframe=round(chunktime*chunksize*fps)
     highframe=min(nframes, round((chunktime+1)*chunksize*fps))
     for frame in range(lowframe,highframe):
-        writer.writeFrame(singlevideo[frame,:,:,:])
+        writer.writeFrame(allvideos[frame,:,:,:])
 
