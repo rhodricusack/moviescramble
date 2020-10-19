@@ -6,6 +6,7 @@ Scrambles movies in time, by cutting into chunks and rearranging. Chunks are 2.0
 
 ## Versions
 v0.0, 2020-10-14
+
 v0.1, 2020-10-19
  *    Chop off last partial chunk, so that all chunks in a randomisation are of the chunksize
  *   Implement alternate and random mixstyles to decide how multiple movies are mixed 
