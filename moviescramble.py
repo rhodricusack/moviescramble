@@ -9,14 +9,20 @@ import numpy as np
 # 2020-10-19, v0.1: 
 #    Chop off last partial chunk, so that all chunks in a randomisation are of the chunksize
 #    Implement alternate and random mixstyles 
+# 2020-10-19 v0.2:
+#    Implement jittered chunk length, which is useful for differentiating brain activity due to a switch in movies from the steady state within a clip
+# 
+# Length of randomisation chunk - now a range
+minchunksize=2.0
+maxchunksize=14.0
 
-# Length of randomisation chunk
-chunksize=8.0
 # If movies have different heights, can clip centre of them to height specified here. Otherwise put None
 clipheight=266
 # When multiple movies, can choose how they are mixed - alternate clips from each movie or completely random
-mixstyle='alternate' # alternate | random
+mixstyle='alternate' # alternate | random 
 
+# Should order of clips for an individual movie be shuffled?
+shufflemovies=True
 
 # Example with just one video
 # infn=['../videos/moana_saves_turtle.mp4']
@@ -27,13 +33,14 @@ mixstyle='alternate' # alternate | random
 
 # Example with two videos intermixed
 infn=['../videos/moana_saves_turtle.mp4','../videos/bighero6.mp4']
-outfn='../videos/moana_bighero_scrambled_%fs_%s.mp4'%(chunksize, mixstyle)
-
-
+outfn='../videos/moana_bighero_scrambled_%d-%ds_%s.mp4'%(minchunksize, maxchunksize, mixstyle)
 
 # # Example with two videos intermixed
 # infn=['../videos/bathsong.mp4','../videos/mountains.mp4']
 # outfn='../videos/mixed_scrambled_%fs.mp4'%chunksize
+
+# Average chunksize
+chunksize=(minchunksize+maxchunksize)/2
 
 def load_video(infn, clipheight=None):
     # Load metadata
@@ -71,10 +78,18 @@ nmovies=len(infn)
 # Get random order for each movie
 #  Now insist on chunks being whole chunks (drop last partial chunk)
 allnchunks=[math.floor(x/chunksize) for x in alldur]
-allrorder=[np.random.permutation(x) for x in allnchunks]
-
 # In mixtures, equal number of chunks from each movie
 minnchunks=np.min(allnchunks)
+
+allrorder=[np.random.permutation(minnchunks) for x in alldur]
+allchunklen=[np.linspace(minchunksize,maxchunksize,minnchunks) for x in alldur]
+
+# Shuffle within a movie?
+if shufflemovies:
+    allchunks=[np.random.permutation(x) for x in allchunklen]
+
+# Chunk start times (seconds)
+allchunkstart=[np.concatenate(([0],np.cumsum(x))) for x in allchunklen]
 
 # Order of movies
 movieorder=list(np.arange(nmovies)) * minnchunks
@@ -93,8 +108,8 @@ allchunkcount=[0]*nmovies
 for chunkmovie in movieorder:
     chunktime=allrorder[chunkmovie][allchunkcount[chunkmovie]]
     allchunkcount[chunkmovie]+=1
-    lowframe=round(chunktime*chunksize*fps)
-    highframe=round((chunktime+1)*chunksize*fps)
+    lowframe=round(allchunkstart[chunkmovie][chunktime]*fps)
+    highframe=round(allchunkstart[chunkmovie][chunktime+1]*fps)
     for frame in range(lowframe,highframe):
         writer.writeFrame(allvideos[chunkmovie][frame,:,:,:])
 
